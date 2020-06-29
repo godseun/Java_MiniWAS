@@ -23,11 +23,14 @@ public class Main {
 			
 			ServerSocket servSocket = null;
 			PrintWriter pw = null;
+			OutputStream out = null;
+			BufferedReader br = null;
+			Socket socket = null;
 			try {
 				servSocket = new ServerSocket(1230);
 				
-				Socket socket = servSocket.accept();
-				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				socket = servSocket.accept();
+				br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String headLine = null;
 				while((headLine = br.readLine()) != null) {
 					if(headLine.equals("")) {
@@ -36,7 +39,7 @@ public class Main {
 					System.out.println(" header :: "+headLine);
 				}
 				
-				OutputStream out = socket.getOutputStream();
+				out = socket.getOutputStream();
 				pw = new PrintWriter(new OutputStreamWriter(out));
 				
 				pw.println("HTTP/1.1 200 OK");
@@ -48,7 +51,7 @@ public class Main {
 				out.write(b_query);
 				out.flush();
 				
-				System.out.println("\n :: sucess");
+				System.out.println("\n :: sucess\n");
 				
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -56,6 +59,9 @@ public class Main {
 				try {
 					servSocket.close();
 					pw.close();
+					out.close();
+					br.close();
+					socket.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
